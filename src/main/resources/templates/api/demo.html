@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>Sensitive Data Exposure (API)</h1>
+
+        <div class="mission-grid" style="grid-template-columns: 1fr 1fr;">
+            <!-- Vulnerable Panel -->
+            <div class="card">
+                <h4>🗣️ The Gossip Protocol</h4>
+                <div
+                    style="background: rgba(255, 51, 102, 0.1); border: 1px dashed var(--accent-red); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <strong class="text-red">📢 FILTERING: DISABLED</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">"Ask me about a user, and I'll
+                        tell you EVERYTHING. Even their secrets."</p>
+                </div>
+
+                <label>Target API Endpoint:</label>
+                <div class="code-block" style="color: var(--accent-red); margin-bottom: 15px;">GET /vuln/api/student/1
+                </div>
+
+                <button type="button" class="btn btn-danger" style="width: 100%;" onclick="fetchVulnerable()">
+                    Request Full Dump
+                </button>
+
+                <div id="vulnResult" style="margin-top: 15px; display: none;">
+                    <h5 class="text-red">DATA LEAKED:</h5>
+                    <pre style="background: #220000; padding: 10px; border-radius: 4px; border: 1px solid var(--accent-red); font-size: 0.8rem; overflow-x: auto; color: #ffcccc;"
+                        id="vulnJson"></pre>
+                </div>
+            </div>
+
+            <!-- Secure Panel -->
+            <div class="card" style="border-color: var(--accent-green);">
+                <h4>💼 The Confidential Courier</h4>
+                <div
+                    style="background: rgba(0, 255, 0, 0.05); border: 1px solid var(--accent-green); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <strong class="text-green">✅ DTO PATTERN: ACTIVE</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">"I only carry what is
+                        necessary. Sensitive data stays in the vault."</p>
+                </div>
+
+                <label>Target API Endpoint:</label>
+                <div class="code-block" style="color: var(--accent-green); margin-bottom: 15px;">GET
+                    /secure/api/student/1</div>
+
+                <button type="button" class="btn btn-primary" style="width: 100%;" onclick="fetchSecure()">
+                    Request Public Profile
+                </button>
+
+                <div id="secureResult" style="margin-top: 15px; display: none;">
+                    <h5 class="text-green">CLEAN RESPONSE:</h5>
+                    <pre style="background: #002200; padding: 10px; border-radius: 4px; border: 1px solid var(--accent-green); font-size: 0.8rem; overflow-x: auto; color: #ccffcc;"
+                        id="secureJson"></pre>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function fetchVulnerable() {
+                fetch('/vuln/api/student/1')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('vulnResult').style.display = 'block';
+                        const jsonStr = JSON.stringify(data, null, 2);
+                        // Highlight sensitive fields
+                        const highlighted = jsonStr
+                            .replace(/"id": \d+,/g, '<span style="background: red; color: white;">"id": 1,</span>')
+                            .replace(/"password": ".*"/g, '<span style="background: red; color: white; font-weight: bold;">"password": "PLAIN_TEXT_PASSWORD"</span>') // Mock highlight if field existed, actually logic below
+                            .replace(/"notes": ".*"/g, match => `<span style="background: red; color: white;">${match}</span>`);
+
+                        document.getElementById('vulnJson').innerHTML = highlighted;
+                    })
+                    .catch(err => alert('Error fetching vulnerable API: ' + err));
+            }
+
+            function fetchSecure() {
+                fetch('/secure/api/student/1')
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('secureResult').style.display = 'block';
+                        document.getElementById('secureJson').textContent = JSON.stringify(data, null, 2);
+                    })
+                    .catch(err => alert('Error fetching secure API: ' + err));
+            }
+        </script>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>SQL Injection (Vulnerable)</h1>
+
+        <div class="mission-grid" style="grid-template-columns: 2fr 1fr;">
+            <!-- Attack Panel -->
+            <div class="card">
+                <h4>🪣 The Leaky Bucket Database</h4>
+                <div
+                    style="background: rgba(255, 51, 102, 0.1); border: 1px dashed var(--accent-red); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <strong class="text-red">🔥 FIREWALL STATUS: OFF</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">"It was slowing down our
+                        queries, so we disabled it. Trusting user input is faster!"</p>
+                </div>
+
+                <form action="/vuln/sqli" method="get">
+                    <label>Search Student Name:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" name="name" th:value="${param.name}" placeholder="e.g. ' OR '1'='1"
+                            style="flex: 1;" />
+                        <button type="button" class="btn"
+                            style="background: rgba(255, 51, 102, 0.2); color: var(--accent-red); border: 1px solid var(--accent-red);"
+                            onclick="runDemoAndSubmit('name', `' OR '1'='1`)">💥 Attack (Admin)</button>
+                    </div>
+                    <button type="submit" class="btn btn-danger" style="margin-top: 10px;">Execute Query
+                        (Unsafe)</button>
+                </form>
+            </div>
+
+            <!-- Live Query Cam -->
+            <div class="card" style="background: #000; border: 1px solid var(--accent-red);">
+                <h5 class="text-red">🎥 LIVE QUERY CAM</h5>
+                <p class="text-secondary" style="font-size: 0.8rem; margin-bottom: 10px;">Watch us carelessly paste your
+                    text directly into the code:</p>
+
+                <div th:if="${query}">
+                    <div style="font-family: var(--font-mono); font-size: 0.8rem; color: #fff;">
+                        SELECT * FROM students WHERE first_name = '<span th:text="${param.name}"
+                            style="color: var(--accent-red); font-weight: bold; background: rgba(255,0,0,0.3);"></span>'
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.7rem; color: var(--accent-red);">
+                        > PARSING COMPLETE<br />
+                        > LOGIC BYPASSED<br />
+                        > DUMPING DATABASE...
+                    </div>
+                </div>
+                <div th:unless="${query}" style="text-align: center; color: #666; padding: 20px;">
+                    (Waiting for input...)
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${students}" class="card" style="margin-top: 20px;">
+            <h4>Leaked Results:</h4>
+            <div class="mission-grid">
+                <div th:each="s : ${students}"
+                    style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px; border-left: 3px solid var(--accent-red);">
+                    <div th:text="${s.firstName} + ' ' + ${s.lastName}" style="font-weight: bold;"></div>
+                    <div th:text="${s.email}" class="text-secondary" style="font-size: 0.9rem;"></div>
+                    <div style="margin-top: 5px;">GPA: <span th:text="${s.gpa}" class="text-cyan"></span> (Confidential)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

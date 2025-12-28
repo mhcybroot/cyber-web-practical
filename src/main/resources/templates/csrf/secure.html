@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>CSRF (Secure)</h1>
+
+        <div class="mission-grid" style="grid-template-columns: 2fr 1fr;">
+            <!-- Secure Bank -->
+            <div class="card" style="border-color: var(--accent-green);">
+                <h4>🏦 The Verified Exchange</h4>
+                <div
+                    style="background: rgba(0, 255, 0, 0.05); border: 1px solid var(--accent-green); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <strong class="text-green">✅ TOKEN REQUIRED</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">We verify the origin of every
+                        request. No token? No service.</p>
+                </div>
+
+                <form th:action="@{/secure/csrf/change-email}" method="post">
+                    <label>Update Email:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="email" name="email" placeholder="new@example.com" style="flex: 1;" />
+                        <button type="submit" class="btn btn-primary">Update Email</button>
+                    </div>
+                </form>
+
+                <hr style="border-color: #444; margin: 20px 0;" />
+
+                <button type="button" class="btn" disabled
+                    style="width: 100%; background: #222; color: #666; border: 1px solid #444; cursor: not-allowed;">
+                    😈 CLICK ME TO WIN A FREE IPHONE! <br />
+                    <span style="font-size: 0.7rem;">(Attack Disabled: Browser will block or Server will reject)</span>
+                </button>
+            </div>
+
+            <!-- Security Monitor -->
+            <div class="card" style="background: #001; border: 1px solid var(--accent-green);">
+                <h5 class="text-green">🎫 SECURITY BADGE</h5>
+                <p class="text-secondary" style="font-size: 0.8rem; margin-bottom: 10px;">Hidden field injected by
+                    Spring Security:</p>
+
+                <div
+                    style="background: rgba(0, 50, 0, 0.3); padding: 10px; border-radius: 4px; border: 1px solid var(--accent-green);">
+                    <div style="font-size: 0.7rem; color: var(--accent-green); font-weight: bold;">_csrf</div>
+                    <div
+                        style="font-size: 0.6rem; color: #fff; word-break: break-all; font-family: var(--font-mono); margin-top: 5px;">
+                        [Hidden UUID Token]
+                    </div>
+                </div>
+                <p class="text-secondary" style="font-size: 0.8rem; margin-top: 10px;">
+                    The attacker's website cannot read this token from your browser, so they cannot forge a valid
+                    request.
+                </p>
+            </div>
+        </div>
+
+        <div th:if="${message}" class="card" style="margin-top: 20px; border-color: var(--accent-green);">
+            <h4 class="text-green">✅ REQUEST VERIFIED</h4>
+            <p th:text="${message}"></p>
+        </div>
+    </div>
+</body>
+
+</html>

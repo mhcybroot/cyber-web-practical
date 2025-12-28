@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>Open Redirect (Vulnerable)</h1>
+
+        <div class="mission-grid" style="grid-template-columns: 2fr 1fr;">
+            <!-- Portal Form -->
+            <div class="card">
+                <h4>🌀 The Mystery Portal</h4>
+                <div
+                    style="background: rgba(255, 51, 102, 0.1); border: 1px dashed var(--accent-red); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <strong class="text-red">⛔ DESTINATION: UNKNOWN</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">"Where are we going? Who
+                        knows! Maybe to a phishing site, maybe to Narnia."</p>
+                </div>
+
+                <form action="/vuln/redirect" method="get">
+                    <label>Enter Destination URL:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" name="url" placeholder="http://malicious-site.com/login" style="flex: 1;" />
+                        <button type="submit" class="btn btn-danger">Enter Portal</button>
+                    </div>
+                </form>
+
+                <hr style="border-color: #444; margin: 20px 0;" />
+
+                <button type="button" class="btn"
+                    style="width: 100%; background: linear-gradient(45deg, #220022, #550055); color: #f0f; border: 1px solid #f0f;"
+                    onclick="runDemoAndSubmit('url', 'http://www.google.com')">
+                    🚀 WARP TO GOOGLE (External)
+                </button>
+            </div>
+
+            <!-- Warning Panel -->
+            <div class="card" style="border: 1px solid var(--accent-red); text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">🎣</div>
+                <h5 class="text-red">PHISHING RISK</h5>
+                <p class="text-secondary" style="font-size: 0.8rem;">
+                    Attackers send links like:<br />
+                    <code style="color: var(--accent-cyan);">/vuln/redirect?url=fake-login.com</code>
+                </p>
+                <p class="text-secondary" style="font-size: 0.8rem; margin-top: 10px;">
+                    Users trust your domain, but land on the attacker's site!
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

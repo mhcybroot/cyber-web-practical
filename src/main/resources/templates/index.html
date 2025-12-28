@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>Mission Control</h1>
+        <p class="text-secondary" style="margin-bottom: 30px;">
+            Select a module to demonstrate vulnerability exploitation and mitigation strategies.
+        </p>
+
+        <!-- Admin Tools -->
+        <div sec:authorize="hasRole('ADMIN')" style="margin-bottom: 30px;">
+            <h4 class="text-purple"
+                style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">
+                <span style="margin-right: 10px;">⚡</span> Admin Tools
+            </h4>
+            <div class="mission-grid">
+                <div class="card">
+                    <h3>User Management</h3>
+                    <p class="text-secondary">Create, update, and delete lab users.</p>
+                    <br />
+                    <a href="/users" class="btn btn-primary">Manage Users</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vulnerability Modules -->
+        <h4 class="text-cyan"
+            style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">
+            <span style="margin-right: 10px;">🛡️</span> Vulnerability Modules
+        </h4>
+
+        <div class="mission-grid">
+            <!-- 1. SQL Injection -->
+            <div class="card">
+                <h4>1. SQL Injection</h4>
+                <p class="text-secondary">Manipulate database queries via user input.</p>
+                <div class="flex-between">
+                    <a href="/vuln/sqli" class="btn badge-vuln">Vulnerable</a>
+                    <a href="/secure/sqli" class="btn badge-secure">Secure</a>
+                </div>
+            </div>
+
+            <!-- 2. Reflected XSS -->
+            <div class="card">
+                <h4>2. Reflected XSS</h4>
+                <p class="text-secondary">Inject malicious scripts that execute immediately.</p>
+                <div class="flex-between">
+                    <a href="/vuln/xss/reflected" class="btn badge-vuln">Vulnerable</a>
+                    <a href="/secure/xss/reflected" class="btn badge-secure">Secure</a>
+                </div>
+            </div>
+
+            <!-- 3. Stored XSS -->
+            <div class="card">
+                <h4>3. Stored XSS</h4>
+                <p class="text-secondary">Persist scripts that affect other users.</p>
+                <div class="flex-between">
+                    <a href="/vuln/xss/stored" class="btn badge-vuln">Vulnerable</a>
+                    <a href="/secure/xss/stored" class="btn badge-secure">Secure</a>
+                </div>
+            </div>
+
+            <!-- 4. IDOR -->
+            <div class="card">
+                <h4>4. Broken Access (IDOR)</h4>
+                <p class="text-secondary">Access unauthorized user profiles via ID manipulation.</p>
+                <div class="flex-between">
+                    <a href="/vuln/idor/profile?id=1" class="btn badge-vuln">Vulnerable</a>
+                    <a href="/secure/idor/profile?id=1" class="btn badge-secure">Secure</a>
+                </div>
+            </div>
+
+            <!-- 5. Insecure Password Storage -->
+            <div class="card">
+                <h4>5. Insecure Storage</h4>
+                <p class="text-secondary">Compare plain-text vs BCrypt hashing.</p>
+                <div class="flex-between">
+                    <a href="/vuln/register" class="btn badge-vuln">Vulnerable</a>
+                    <a href="/secure/register" class="btn badge-secure">Secure</a>
+                </div>
+            </div>
+
+            <!-- 6. CSRF -->
+            <div class="card">
+                <h4>6. CSRF</h4>
+                <p class="text-secondary">Execute unwanted actions on behalf of a user.</p>
+                <div class="flex-between">
+                    <a href="/vuln/csrf/change-email" class="btn badge-vuln">Vulnerable</a>
+                    <a href="/secure/csrf/change-email" class="btn badge-secure">Secure</a>
+                </div>
+            </div>
+
+            <!-- 7. Data Exposure -->
+            <div class="card">
+                <h4>7. Data Exposure</h4>
+                <p class="text-secondary">Prevent leaking sensitive entity fields via API.</p>
+                <div class="flex-between">
+                    <a href="/vuln/api/student/1" class="btn badge-vuln">Vulnerable</a>
+                    <a href="/secure/api/student/1" class="btn badge-secure">Secure</a>
+                </div>
+            </div>
+
+            <!-- 8. Misconfiguration -->
+            <div class="card">
+                <h4>8. Misconfiguration</h4>
+                <p class="text-secondary">Handle errors gracefully without stack traces.</p>
+                <div class="flex-between">
+                    <a href="/vuln/error" class="btn badge-vuln">Vulnerable</a>
+                    <a href="/secure/error" class="btn badge-secure">Secure</a>
+                </div>
+            </div>
+
+            <!-- 9. Open Redirect -->
+            <div class="card">
+                <h4>9. Open Redirect</h4>
+                <p class="text-secondary">Prevent unvalidated redirects to malicious sites.</p>
+                <div class="flex-between">
+                    <a href="/vuln/redirect?url=http://example.com" class="btn badge-vuln">Vulnerable</a>
+                    <a href="/secure/redirect?url=http://example.com" class="btn badge-secure">Secure</a>
+                </div>
+            </div>
+
+            <!-- 10. Rate Limiting -->
+            <div class="card">
+                <h4>10. Rate Limiting</h4>
+                <p class="text-secondary">Protect login against brute-force attacks.</p>
+                <div class="flex-between">
+                    <a href="/active/login" class="btn btn-primary" style="width: 100%; text-align: center;">Launch
+                        Demo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    console.log("%c DEBUG MODE ENABLED ", "background: #f00; color: #fff");
+    console.log("Welcome to CyberLab!");
+    console.log("Note to dev: Remove this flag before prod: flag{CONSOLE_LOG_LEAK}");
+</script>
+
+</html>

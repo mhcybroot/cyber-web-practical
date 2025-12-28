@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>CSRF (Vulnerable)</h1>
+
+        <div class="mission-grid" style="grid-template-columns: 2fr 1fr;">
+            <!-- Bank Form -->
+            <div class="card">
+                <h4>🏧 The Gullible Bank</h4>
+                <div
+                    style="background: rgba(255, 51, 102, 0.1); border: 1px dashed var(--accent-red); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <strong class="text-red">🔓 SECURITY POLICY: NONE</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">"We process any request we
+                        receive! We don't care where it came from. Convenience first!"</p>
+                </div>
+
+                <form action="/vuln/csrf/change-email" method="post">
+                    <label>Update Your Account Email:</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="email" name="email" placeholder="new@example.com" style="flex: 1;" />
+                        <button type="submit" class="btn btn-danger">Update Email</button>
+                    </div>
+                </form>
+
+                <hr style="border-color: #444; margin: 20px 0;" />
+
+                <label>Simulate Attacker:</label>
+                <button type="button" class="btn"
+                    style="width: 100%; background: linear-gradient(45deg, #000, #330000); color: var(--accent-red); border: 1px solid var(--accent-red);"
+                    onclick="runDemoAndSubmit('email', `hacker_${Date.now()}@evil.com`)">
+                    😈 CLICK ME TO WIN A FREE IPHONE! <br />
+                    <span style="font-size: 0.7rem; color: #aaa;">(Actually changes your email via hidden form)</span>
+                </button>
+            </div>
+
+            <!-- Education Panel -->
+            <div class="card" style="border: 1px solid var(--accent-red);">
+                <h5 class="text-red">🏴‍☠️ BEHIND THE SCENES</h5>
+                <p class="text-secondary" style="font-size: 0.8rem; margin-bottom: 10px;">How the attack works:</p>
+
+                <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 4px;">
+                    <code class="language-html" style="font-size: 0.7rem; color: #ccc;">
+&lt;form method="POST"<br/> 
+&nbsp;&nbsp;action="/vuln/csrf..."&gt;<br/>
+&nbsp;&nbsp;&lt;input name="email"<br/> 
+&nbsp;&nbsp;&nbsp;&nbsp;value="hacker@evil.com"&gt;<br/>
+&lt;/form&gt;<br/>
+&lt;script&gt;form.submit()&lt;/script&gt;
+                    </code>
+                </div>
+                <p class="text-secondary" style="font-size: 0.8rem; margin-top: 10px;">
+                    Because you are logged in, the browser sends your session cookies automatically. The server treats
+                    this request as legitimate.
+                </p>
+            </div>
+        </div>
+
+        <div th:if="${message}" class="card" style="margin-top: 20px; border-color: var(--accent-red);">
+            <h4 class="text-red">⚠️ TRANSACTION ACCEPTED</h4>
+            <p th:text="${message}"></p>
+            <p>"Pleasure doing business with whoever sent that request!"</p>
+        </div>
+    </div>
+</body>
+
+</html>

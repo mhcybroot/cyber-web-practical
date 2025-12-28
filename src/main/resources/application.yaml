@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: cyberweb
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cyberweb
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+app:
+  admin:
+    username: admin
+    password: password
+  user:
+    username: user
+    password: password
+
+
+server:
+  error:
+    include-stacktrace: always
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

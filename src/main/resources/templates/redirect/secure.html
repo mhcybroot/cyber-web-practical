@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>Open Redirect (Secure)</h1>
+
+        <div class="mission-grid" style="grid-template-columns: 2fr 1fr;">
+            <!-- Travel Agent -->
+            <div class="card" style="border-color: var(--accent-green);">
+                <h4>✈️ The Safe Travel Agent</h4>
+                <div
+                    style="background: rgba(0, 255, 0, 0.05); border: 1px solid var(--accent-green); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <strong class="text-green">✅ LOCAL TRIPS ONLY</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">We check your ticket. If you
+                        try to leave the premises (external URL), we send you home.</p>
+                </div>
+
+                <form action="/secure/redirect" method="get">
+                    <label>Enter Destination Path (Must start with /):</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" name="url" placeholder="/dashboard" style="flex: 1;" />
+                        <button type="submit" class="btn btn-primary">Go Safely</button>
+                    </div>
+                </form>
+
+                <hr style="border-color: #444; margin: 20px 0;" />
+
+                <button type="button" class="btn"
+                    style="width: 100%; background: #002200; color: var(--accent-green); border: 1px solid var(--accent-green);"
+                    onclick="runDemoAndSubmit('url', 'http://www.google.com')">
+                    🛑 TRY EXTERNAL WARP (http://google.com)
+                </button>
+                <p class="text-secondary" style="font-size: 0.8rem; margin-top: 5px; text-align: center;">(This will
+                    redirect you to Home / instead)</p>
+            </div>
+
+            <!-- Security Check -->
+            <div class="card" style="background: #001; border: 1px solid var(--accent-green);">
+                <h5 class="text-green">🛂 BORDER CONTROL</h5>
+                <p class="text-secondary" style="font-size: 0.8rem;">Logic:</p>
+                <pre
+                    style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 4px; color: var(--accent-cyan); font-size: 0.7rem;">
+if (url.startsWith("/") 
+    && !url.startsWith("//")) {
+  return "redirect:" + url;
+}
+return "redirect:/"; // Home
+                </pre>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>Registration (Vulnerable)</h1>
+
+        <div class="mission-grid" style="grid-template-columns: 2fr 1fr;">
+            <!-- Registration Form -->
+            <div class="card">
+                <h4><span style="color: var(--accent-red)">🔓</span> Open Registration Portal</h4>
+                <p class="text-secondary">Welcome! For your convenience, we store everything in <strong>Plain
+                        Text</strong>. No encryption keys to lose!</p>
+                <p class="text-secondary" style="font-size: 0.9rem;">(Please do not use your real banking password...
+                    seriously.)</p>
+
+                <hr style="border-color: var(--border-color); margin: 15px 0;" />
+
+                <form th:action="@{/vuln/register}" method="post">
+                    <label>Username:</label>
+                    <input type="text" name="username" required placeholder="victim" />
+
+                    <label>Password <span
+                            style="color: var(--accent-red); font-size: 0.7rem; text-transform: uppercase; animation: blink 1s infinite;">(NOT
+                            SECURE)</span>:</label>
+                    <input type="password" name="password" required placeholder="123456" />
+
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-danger">Register (Unsafely)</button>
+                        <button type="button" class="btn"
+                            style="background: rgba(255, 51, 102, 0.2); color: var(--accent-red); border: 1px solid var(--accent-red);"
+                            onclick="runDemoAndSubmit('username', `user_${Math.floor(Math.random()*1000)}`); runDemo('password', 'secret123');">💥
+                            Auto Leak My Data</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Live Leak Sidebar -->
+            <div class="card" style="border: 1px dashed var(--accent-red); background: rgba(50, 0, 0, 0.2);">
+                <h5 class="text-red">🔴 LIVE DATA BREACH FEED</h5>
+                <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px;">Real-time view of
+                    <code>users_plaintext</code> table.</p>
+
+                <div th:each="u : ${users}"
+                    style="background: rgba(0,0,0,0.4); padding: 8px; margin-bottom: 8px; border-radius: 4px; border-left: 2px solid var(--accent-red);">
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">User: <span th:text="${u.username}"
+                            style="color: white; font-weight: bold;"></span></div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Pass: <span th:text="${u.password}"
+                            style="color: var(--accent-red); font-family: var(--font-mono);"></span></div>
+                </div>
+
+                <div th:if="${#lists.isEmpty(users)}" style="text-align: center; padding: 20px; opacity: 0.5;">
+                    <p>No victims yet.</p>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${message}" class="card" style="border-color: var(--accent-red); margin-top: 20px;">
+            <h4 class="text-green">✅ Success!</h4>
+            <p th:text="${message}"></p>
+            <p>Look at the sidebar! You are now famous!</p>
+        </div>
+    </div>
+
+    <style>
+        @keyframes blink {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</body>
+
+</html>

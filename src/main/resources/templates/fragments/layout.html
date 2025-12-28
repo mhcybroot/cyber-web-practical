@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html th:fragment="layout(content)" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>CyberLab</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/cyber.css}">
+    <link rel="stylesheet" th:href="@{/css/glitch.css}">
+    <link rel="stylesheet" th:href="@{/css/mascot.css}">
+    <script th:src="@{/js/demo.js}"></script>
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div style="margin-bottom: 30px; padding: 0 10px;">
+                <h2 style="font-family: 'JetBrains Mono'; color: var(--text-primary);">
+                    CYBER<span style="color: var(--accent-cyan)">LAB</span>
+                </h2>
+                <div style="font-size: 0.8rem; color: var(--text-secondary);">OWASP Vulnerability Demo</div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Main</div>
+                <a href="/" class="nav-link">Dashboard</a>
+                <a href="/users" class="nav-link">User Management</a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Vulnerabilities</div>
+                <a href="/vuln/sqli" class="nav-link">1. SQL Injection</a>
+                <a href="/vuln/xss/reflected" class="nav-link">2. Reflected XSS</a>
+                <a href="/vuln/xss/stored" class="nav-link">3. Stored XSS</a>
+                <a href="/vuln/idor/profile?id=1" class="nav-link">4. Broken Access (IDOR)</a>
+                <a href="/vuln/register" class="nav-link">5. Weak Cryptography</a>
+                <a href="/vuln/csrf/change-email" class="nav-link">6. CSRF</a>
+                <a href="/vuln/api/student/1" class="nav-link">7. Data Exposure</a>
+                <a href="/vuln/error" class="nav-link">8. Security Misconfig</a>
+                <a href="/vuln/redirect?url=http://example.com" class="nav-link">9. Open Redirect</a>
+                <a href="/active/login" class="nav-link">10. Rate Limiting</a>
+            </div>
+        </aside>
+
+        <!-- Main Section -->
+        <main class="main-content">
+            <!-- Top Navigation -->
+            <header class="top-bar">
+                <div th:if="${#authentication.principal == 'anonymousUser'}">
+                    <span class="text-secondary">Not Authenticated</span>
+                </div>
+                <div th:unless="${#authentication.principal == 'anonymousUser'}">
+                    <span class="text-secondary">Logged in as: </span>
+                    <span class="text-cyan" style="font-family: var(--font-mono); font-weight: bold;"
+                        th:text="${#authentication.name}">User</span>
+                    <span class="badge badge-secure" style="margin-left: 10px;"
+                        th:text="${#authentication.authorities}">ROLE</span>
+                    <span class="badge"
+                        style="margin-left: 10px; background: #300; color: #f00; border: 1px solid #f00;"
+                        title="Chaos Score">💀 <span id="chaosScoredisplay">0</span></span>
+
+                    <!-- CTF Flag Input -->
+                    <div style="display: inline-block; margin-left: 20px;">
+                        <input type="text" id="flagInput" placeholder="Enter captured flag..."
+                            style="background: #000; border: 1px solid var(--accent-cyan); color: var(--accent-cyan); padding: 4px 8px; font-family: 'JetBrains Mono'; width: 180px; font-size: 0.8rem;">
+                        <button onclick="submitFlag()" class="btn btn-sm btn-outline-primary"
+                            style="border-color: var(--accent-cyan); color: var(--accent-cyan); margin-left: 5px; font-size: 0.8rem;">Submit</button>
+                    </div>
+                </div>
+
+                <div>
+                    <form th:action="@{/logout}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger"
+                            style="padding: 5px 15px; font-size: 0.8rem;">Logout</button>
+                    </form>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-scroll">
+                <!-- Insert content here -->
+                <div th:replace="${content}"></div>
+            </div>
+        </main>
+
+        <!-- Buggy the Mascot -->
+        <div id="mascot-container">
+            <div class="mascot-speech" id="mascot-text">...</div>
+            <div class="mascot-body"></div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

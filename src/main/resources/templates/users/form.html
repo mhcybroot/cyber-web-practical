@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1 th:text="${user.id == null ? 'Add User' : 'Edit User'}" style="margin-bottom: 20px;">User Form</h1>
+
+        <div class="card" style="max-width: 600px;">
+            <div th:if="${param.error}" style="margin-bottom: 20px; color: var(--accent-red);">
+                <p>⚠️ Password is required for new users.</p>
+            </div>
+
+            <form action="/users/save" method="post" th:object="${user}">
+                <input type="hidden" th:field="*{id}" />
+
+                <label class="text-secondary">Username</label>
+                <input type="text" th:field="*{username}" required placeholder="Enter username" />
+
+                <label class="text-secondary">Role</label>
+                <select th:field="*{role}">
+                    <option value="USER">USER - Standard Access</option>
+                    <option value="ADMIN">ADMIN - Full Access</option>
+                </select>
+
+                <label class="text-secondary">Password</label>
+                <input type="password" th:field="*{password}" placeholder="Leave blank to keep existing" />
+                <small th:if="${user.id != null}" class="text-secondary"
+                    style="display: block; margin-top: -10px; margin-bottom: 15px;">(Leave blank to keep existing
+                    password)</small>
+
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary" style="margin-right: 10px;">Save User</button>
+                    <a href="/users" class="btn" style="background: rgba(255,255,255,0.1); color: white;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

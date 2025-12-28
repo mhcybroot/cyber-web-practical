@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>Reflected XSS (Vulnerable)</h1>
+
+        <div class="mission-grid" style="grid-template-columns: 1fr 1fr;">
+            <!-- Input Panel -->
+            <div class="card-body text-center">
+                <!-- SHHH! Secret Flag: flag{DOM_INTRUDER} -->
+                <h2 class="card-title text-danger mb-4">The Echo Chamber</h2>
+                <div
+                    style="background: rgba(255, 51, 102, 0.1); border: 1px dashed var(--accent-red); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <strong class="text-red">⚠️ MIRROR MODE: ACTIVE</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">"We repeat everything you say!
+                        Even if it's a malicious script that steals cookies!"</p>
+                </div>
+
+                <form action="/vuln/xss/reflected" method="get">
+                    <label>Say Something (or Inject Something):</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" name="query" placeholder="<script>alert(1)</script>" style="flex: 1;" />
+                        <button type="button" class="btn"
+                            style="background: rgba(255, 51, 102, 0.2); color: var(--accent-red); border: 1px solid var(--accent-red);"
+                            onclick="runDemoAndSubmit('query', `<script>alert('Hello from the mirror!')</script>`)">💥
+                            Reflect Attack</button>
+                    </div>
+                    <button type="submit" class="btn btn-danger" style="margin-top: 10px;">Send to Mirror
+                        (Unsafe)</button>
+                </form>
+            </div>
+
+            <!-- Mirror Output -->
+            <div class="card"
+                style="background: #111; border: 1px solid var(--accent-red); position: relative; overflow: hidden;">
+                <h5 class="text-red">🪞 REFLECTION SURFACE</h5>
+                <p class="text-secondary" style="font-size: 0.8rem; margin-bottom: 10px;">(What you see below is
+                    rendered as raw HTML)</p>
+
+                <div th:if="${output}" style="padding: 20px; border: 1px dashed #444; text-align: center;">
+                    <!-- The Vulnerability: utext renders HTML tags -->
+                    <h2 th:utext="${output}" style="color: #fff; text-shadow: 0 0 10px var(--accent-red);"></h2>
+                </div>
+
+                <div th:unless="${output}" style="text-align: center; opacity: 0.3; padding: 40px;">
+                    (Silence...)
+                </div>
+
+                <div style="position: absolute; bottom: 10px; right: 10px; font-size: 3rem; opacity: 0.1;">🦜</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

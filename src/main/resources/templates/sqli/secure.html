@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>SQL Injection (Secure)</h1>
+
+        <div class="mission-grid" style="grid-template-columns: 2fr 1fr;">
+            <!-- Secure Panel -->
+            <div class="card" style="border-color: var(--accent-green);">
+                <h4>🛡️ The Ironclad Vault (JPA)</h4>
+                <div
+                    style="background: rgba(0, 255, 0, 0.05); border: 1px solid var(--accent-green); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <strong class="text-green">✅ PARAMETERIZATION: ACTIVE</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">Input is treated as data,
+                        never as code. Hacker tears are delicious.</p>
+                </div>
+
+                <form action="/secure/sqli" method="get">
+                    <label>Search Student Name:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" name="name" th:value="${param.name}" placeholder="e.g. ' OR '1'='1"
+                            style="flex: 1;" />
+                        <button type="button" class="btn"
+                            style="background: rgba(0, 243, 255, 0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan);"
+                            onclick="runDemoAndSubmit('name', `' OR '1'='1`)">Test Attack Shield</button>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Search (Safe)</button>
+                </form>
+            </div>
+
+            <!-- Visualization -->
+            <div class="card" style="background: #001; border: 1px solid var(--accent-green);">
+                <h5 class="text-green">🔬 SECURITY MONITOR</h5>
+                <p class="text-secondary" style="font-size: 0.8rem; margin-bottom: 10px;">How the database sees your
+                    input:</p>
+
+                <div th:if="${param.name}">
+                    <div style="font-family: var(--font-mono); font-size: 0.8rem; color: #fff;">
+                        SELECT * FROM students WHERE first_name = <span style="color: var(--accent-green);">?</span>
+                    </div>
+                    <div
+                        style="margin-top: 10px; font-size: 0.8rem; color: #aaa; border-top: 1px solid #333; padding-top: 5px;">
+                        Parameter 1: "<span th:text="${param.name}" style="color: var(--accent-green);"></span>"
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.7rem; color: var(--accent-green);">
+                        > THREAT NEUTRALIZED<br />
+                        > LITERAL SEARCH EXECUTED
+                    </div>
+                </div>
+                <div th:unless="${param.name}" style="text-align: center; color: #666; padding: 20px;">
+                    (System Secure)
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${students}" class="card" style="margin-top: 20px;">
+            <h4>Results:</h4>
+            <ul th:if="${!students.empty}">
+                <li th:each="s : ${students}">
+                    <span th:text="${s.firstName} + ' ' + ${s.lastName}"></span>
+                    (<span th:text="${s.email}" class="text-secondary"></span>)
+                </li>
+            </ul>
+            <p th:if="${students.empty}" class="text-secondary">No students found with that EXACT name.</p>
+        </div>
+    </div>
+</body>
+
+</html>

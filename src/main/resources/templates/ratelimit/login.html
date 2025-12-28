@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>Rate Limiting Demo</h1>
+
+        <div class="mission-grid">
+            <!-- Vulnerable Panel -->
+            <div class="card">
+                <h4>💤 The Sleeping Doorman</h4>
+                <div
+                    style="background: rgba(255, 51, 102, 0.1); border: 1px dashed var(--accent-red); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <div style="font-size: 2rem; margin-bottom: 5px;">😴</div>
+                    <strong class="text-red">ATTEMPTS: ∞</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">"Zzz... come in... bring your
+                        friends... zzz..."</p>
+                </div>
+
+                <form th:action="@{/vuln/login-limit}" method="post" id="vulnForm">
+                    <input type="text" name="username" placeholder="Username" />
+                    <input type="password" name="password" placeholder="Password" />
+                    <button type="submit" class="btn btn-danger"
+                        style="width: 100%; margin-bottom: 10px; margin-top: 10px;">Login (No Limit)</button>
+                    <button type="button" class="btn"
+                        style="width: 100%; background: linear-gradient(45deg, #300, #500); color: var(--accent-red); border: 1px solid var(--accent-red);"
+                        onclick="runDemo('username', 'admin'); runDemo('password', 'wrong'); document.getElementById('vulnForm').submit();">
+                        💥 SPAM ATTACK (Wake him up)
+                    </button>
+                </form>
+                <p th:if="${errorVuln}" class="text-red" style="margin-top: 10px;" th:text="${errorVuln}"></p>
+            </div>
+
+            <!-- Secure Panel -->
+            <div class="card" style="border-color: var(--accent-green);">
+                <h4>🦍 The Bouncer (Bucket4j)</h4>
+                <div
+                    style="background: rgba(0, 255, 0, 0.05); border: 1px solid var(--accent-green); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <div style="font-size: 2rem; margin-bottom: 5px;">🛑</div>
+                    <strong class="text-green">ATTEMPTS: LIMITED</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">"ID please. Don't push your
+                        luck. 3 strikes and you're out."</p>
+                </div>
+
+                <form th:action="@{/secure/login-limit}" method="post" id="secureForm">
+                    <input type="text" name="username" placeholder="Username" />
+                    <input type="password" name="password" placeholder="Password" />
+                    <button type="submit" class="btn btn-primary"
+                        style="width: 100%; margin-bottom: 10px; margin-top: 10px;">Login (Rate Limited)</button>
+                    <button type="button" class="btn"
+                        style="width: 100%; background: rgba(0, 243, 255, 0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan);"
+                        onclick="runDemo('username', 'admin'); runDemo('password', 'wrong'); document.getElementById('secureForm').submit();">
+                        🧪 TEST PATIENCE
+                    </button>
+                </form>
+                <p th:if="${errorSecure}" class="text-red"
+                    style="margin-top: 10px; font-weight: bold; padding: 10px; border: 1px solid var(--accent-red); background: #300;"
+                    th:text="${errorSecure}"></p>
+                <p th:if="${message}" class="text-green" style="margin-top: 10px;" th:text="${message}"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bouncer FX Triggers -->
+    <script th:if="${blocked}">
+        document.addEventListener('DOMContentLoaded', () => {
+            SFX.fail();
+            triggerGlitch();
+            triggerMascot("🛑 NOT ON THE LIST! GET OUT! 🦍", "angry");
+        });
+    </script>
+    <script th:if="${allowed}">
+        document.addEventListener('DOMContentLoaded', () => {
+            SFX.success();
+            triggerMascot("You're cool. Go in. 😎", "neutral");
+        });
+    </script>
+</body>
+
+</html>

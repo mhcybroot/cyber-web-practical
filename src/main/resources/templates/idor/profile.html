@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>User Profile - Classified</h1>
+
+        <div th:if="${profile}" class="card">
+            <div class="flex-between">
+                <h4>Personnel File: <span th:text="${profile.username}" class="text-cyan"></span></h4>
+                <div>
+                    <span class="badge badge-secure" style="margin-right: 10px;">ID: <span
+                            th:text="${profile.id}"></span></span>
+                    <!-- Provide a hint to try other IDs -->
+                    <button th:if="${profile.id != 2}" type="button" class="btn"
+                        style="padding: 5px 10px; font-size: 0.8rem; background: rgba(255, 51, 102, 0.2); color: var(--accent-red); border: 1px solid var(--accent-red);"
+                        onclick="navigateTo('/vuln/idor/profile?id=2')">💥 Snooping (Try ID=2)</button>
+                    <button th:if="${profile.id == 2}" type="button" class="btn"
+                        style="padding: 5px 10px; font-size: 0.8rem; background: rgba(0, 243, 255, 0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan);"
+                        onclick="navigateTo('/vuln/idor/profile?id=1')">Return to My Profile</button>
+                </div>
+            </div>
+            <hr style="border-color: var(--border-color); margin: 15px 0;" />
+
+            <div class="mission-grid" style="grid-template-columns: 1fr 2fr;">
+                <!-- Avatar / Status -->
+                <div style="text-align: center;">
+                    <div
+                        style="width: 100px; height: 100px; background: rgba(255,255,255,0.05); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--accent-purple);">
+                        <span style="font-size: 2rem;">👤</span>
+                    </div>
+                    <!-- Dynamic "Bio" based on Role/User -->
+                    <p><strong>Clearance:</strong> <span th:text="${profile.role}" class="text-purple"></span></p>
+
+                    <div th:if="${profile.username == 'admin'}"
+                        style="margin-top: 10px; color: var(--accent-red); font-weight: bold;">
+                        ⚠️ TOP SECRET ⚠️
+                    </div>
+                    <div th:if="${profile.username != 'admin'}" style="margin-top: 10px; color: var(--text-secondary);">
+                        Standard Personnel
+                    </div>
+                </div>
+
+                <!-- Details -->
+                <div>
+                    <p><strong class="text-secondary">Username:</strong> <span th:text="${profile.username}"></span></p>
+                    <p><strong class="text-secondary">Password Hash (Leaked):</strong></p>
+                    <div
+                        style="background: rgba(0,0,0,0.3); padding: 5px; border-radius: 4px; border: 1px dashed var(--accent-red); word-break: break-all; font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-red);">
+                        <span th:text="${profile.password}"></span>
+                    </div>
+
+                    <!-- Fun "Hidden" Content -->
+                    <div
+                        style="margin-top: 15px; padding: 10px; background: rgba(188, 19, 254, 0.1); border-left: 3px solid var(--accent-purple);">
+                        <p style="margin: 0; font-size: 0.9rem;">
+                            <strong class="text-purple">Latest Activity:</strong>
+                            <span th:if="${profile.username == 'admin'}">Planning world domination. Resetting server
+                                logs. Buying cat food.</span>
+                            <span th:if="${profile.username == 'user'}">Googling "how to hack Facebook". Forgot password
+                                (again).</span>
+                            <span th:unless="${profile.username == 'admin' or profile.username == 'user'}">Unknown
+                                entity detected.</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="card" style="border-color: var(--accent-red);">
+            <h4 class="text-red">⛔ ACCESS DENIED ⛔</h4>
+            <p th:text="${error}"></p>
+            <p class="text-secondary">Nice try, hacker! But this endpoint checks your ID matches the session.</p>
+            <br />
+            <button type="button" class="btn" onclick="navigateTo('/secure/idor/profile?id=1')"
+                style="background: rgba(255,255,255,0.1); color: white;">Return to Safety (ID=1)</button>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <p class="text-secondary">Tip: Change the <code>id=...</code> in the URL bar to see if you can access
+                others.</p>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Login | CyberLab</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/cyber.css}">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .login-card {
+            width: 400px;
+            background: rgba(19, 20, 31, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .brand {
+            font-family: 'JetBrains Mono';
+            font-size: 2rem;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .brand span {
+            color: var(--accent-cyan);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+        <div class="brand">CYBER<span>LAB</span></div>
+        <p class="text-secondary" style="text-align: center; margin-bottom: 30px;">Authenticate to access the lab.</p>
+
+        <div th:if="${param.error}"
+            style="margin-bottom: 20px; padding: 10px; border-radius: 6px; background: rgba(255,51,102,0.1); border: 1px solid var(--accent-red); color: var(--accent-red); text-align: center;">
+            Invalid Credentials
+        </div>
+
+        <div th:if="${param.logout}"
+            style="margin-bottom: 20px; padding: 10px; border-radius: 6px; background: rgba(0,255,157,0.1); border: 1px solid var(--accent-green); color: var(--accent-green); text-align: center;">
+            You have been logged out.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <!-- Default CSRF token is included by Thymeleaf automatically -->
+
+            <label class="text-secondary" style="font-size: 0.9rem;">Username</label>
+            <input type="text" name="username" placeholder="e.g. admin" required autofocus>
+
+            <label class="text-secondary" style="font-size: 0.9rem;">Password</label>
+            <input type="password" name="password" placeholder="e.g. password" required>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                ACCESS SYSTEM
+            </button>
+        </form>
+
+        <div style="margin-top: 20px; text-align: center; font-size: 0.8rem; color: var(--text-secondary);">
+            <p>Default: admin / password</p>
+        </div>
+    </div>
+
+</body>
+
+</html>

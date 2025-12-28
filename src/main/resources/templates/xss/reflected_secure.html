@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>Reflected XSS (Secure)</h1>
+
+        <div class="mission-grid" style="grid-template-columns: 1fr 1fr;">
+            <!-- Input Panel -->
+            <div class="card" style="border-color: var(--accent-green);">
+                <h4>🧼 The Sanitized Zone</h4>
+                <div
+                    style="background: rgba(0, 255, 0, 0.05); border: 1px solid var(--accent-green); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <strong class="text-green">✅ FILTER: ACTIVE</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">We scrub your input with soap.
+                        Special characters are escaped to HTML entities.</p>
+                </div>
+
+                <form action="/secure/xss/reflected" method="get">
+                    <label>Enter Query:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" name="query" placeholder="<script>alert(1)</script>" style="flex: 1;" />
+                        <button type="button" class="btn"
+                            style="background: rgba(0, 243, 255, 0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan);"
+                            onclick="runDemoAndSubmit('query', `<script>alert('Failed')</script>`)">Test Shield</button>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Execute (Safe)</button>
+                </form>
+            </div>
+
+            <!-- Output Panel -->
+            <div class="card" style="background: #001; border: 1px solid var(--accent-green);">
+                <h5 class="text-green">🧪 LAB RESULTS</h5>
+                <p class="text-secondary" style="font-size: 0.8rem; margin-bottom: 10px;">Input rendered safely as text:
+                </p>
+
+                <div th:if="${output}" style="padding: 20px; background: rgba(0,0,0,0.5); border-radius: 4px;">
+                    <!-- The Fix: text escapes HTML tags -->
+                    <div th:text="${output}" style="font-family: var(--font-mono); color: var(--accent-cyan);"></div>
+                    <div
+                        style="margin-top: 15px; font-size: 0.7rem; color: #666; border-top: 1px solid #333; padding-top: 5px;">
+                        Status: CLEAN<br />
+                        &amp;lt;script&amp;gt; tags neutralized.
+                    </div>
+                </div>
+                <div th:unless="${output}" style="text-align: center; opacity: 0.3; padding: 40px;">
+                    (Waiting for sample...)
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

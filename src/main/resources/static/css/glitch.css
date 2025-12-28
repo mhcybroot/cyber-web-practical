@@ -1,0 +1,143 @@
+/* Glitch Effects */
+@keyframes glitch-skew {
+    0% {
+        transform: skew(0deg);
+    }
+
+    20% {
+        transform: skew(-2deg);
+    }
+
+    40% {
+        transform: skew(2deg);
+    }
+
+    60% {
+        transform: skew(-1deg);
+    }
+
+    80% {
+        transform: skew(1deg);
+    }
+
+    100% {
+        transform: skew(0deg);
+    }
+}
+
+@keyframes glitch-anim-1 {
+    0% {
+        clip: rect(20px, 9999px, 10px, 0);
+    }
+
+    100% {
+        clip: rect(80px, 9999px, 80px, 0);
+    }
+}
+
+@keyframes glitch-anim-2 {
+    0% {
+        clip: rect(10px, 9999px, 90px, 0);
+    }
+
+    100% {
+        clip: rect(50px, 9999px, 20px, 0);
+    }
+}
+
+@keyframes shake-hard {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    10% {
+        transform: translate(-5px, -5px) rotate(-1deg);
+    }
+
+    20% {
+        transform: translate(5px, 5px) rotate(1deg);
+    }
+
+    30% {
+        transform: translate(-5px, 5px) rotate(-1deg);
+    }
+
+    40% {
+        transform: translate(5px, -5px) rotate(1deg);
+    }
+
+    50% {
+        transform: translate(-5px, -5px) rotate(-1deg);
+    }
+
+    60% {
+        transform: translate(5px, 5px) rotate(1deg);
+    }
+
+    70% {
+        transform: translate(-5px, 5px) rotate(-1deg);
+    }
+
+    80% {
+        transform: translate(5px, -5px) rotate(1deg);
+    }
+
+    90% {
+        transform: translate(-5px, -5px) rotate(-1deg);
+    }
+
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+}
+
+.glitch-active {
+    animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+    position: relative;
+    color: red !important;
+}
+
+.glitch-active::before,
+.glitch-active::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+.glitch-active::before {
+    left: 2px;
+    text-shadow: -1px 0 #f00;
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch-active::after {
+    left: -2px;
+    text-shadow: -1px 0 #0ff;
+    animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+/* Screen Shake for the body */
+.body-shake {
+    animation: shake-hard 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+/* Confetti Helper (Simple CSS fallback if JS fails) */
+.confetti-particle {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background-color: #f00;
+    animation: fall 3s linear forwards;
+    z-index: 9999;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}

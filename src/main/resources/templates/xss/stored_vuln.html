@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>Stored XSS (Vulnerable)</h1>
+
+        <div class="mission-grid" style="grid-template-columns: 1fr 1fr;">
+            <!-- Post Form -->
+            <div class="card">
+                <h4>🎨 The Graffiti Wall</h4>
+                <div
+                    style="background: rgba(255, 51, 102, 0.1); border: 1px dashed var(--accent-red); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <strong class="text-red">☣️ CONTENT POLICY: ANYTHING GOES</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">"Write a poem, or write a
+                        virus. We display it all exactly as you typed it!"</p>
+                </div>
+
+                <form th:action="@{/vuln/xss/stored/add}" method="post">
+                    <div style="margin-bottom: 10px;">
+                        <label>Vandal Name:</label>
+                        <input type="text" name="name" placeholder="Anonymous" required />
+                    </div>
+
+                    <label>Graffiti Content:</label>
+                    <div style="display: flex; gap: 10px; align-items: flex-start;">
+                        <textarea name="notes" rows="3" placeholder="<script>alert('I was here')</script>"
+                            style="flex: 1; font-family: 'Courier New', monospace;"></textarea>
+                    </div>
+
+                    <div style="margin-top: 10px; display: flex; gap: 5px;">
+                        <button type="submit" class="btn btn-danger">Post Graffiti</button>
+                        <button type="button" class="btn"
+                            style="background: rgba(255, 51, 102, 0.2); color: var(--accent-red); border: 1px solid var(--accent-red);"
+                            onclick="runDemo('name', 'ScriptKiddie'); runDemoAndSubmit('notes', `<script>alert('ALL YOUR BASE ARE BELONG TO US')</script>`)">💥
+                            Attack</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- The Wall -->
+            <div class="card" style="background: #222; border: 1px solid var(--accent-red); min-height: 300px;">
+                <h5 class="text-red">🧱 THE WALL (Unsanitized)</h5>
+                <p class="text-secondary" style="font-size: 0.8rem; margin-bottom: 10px;">(Warning: Scripts execute on
+                    load)</p>
+
+                <div th:each="s : ${students}"
+                    style="background: #333; padding: 10px; margin-bottom: 10px; border-radius: 2px; border-left: 5px solid var(--accent-red); font-family: 'Comic Sans MS', cursive, sans-serif;">
+                    <div style="font-size: 0.8rem; color: #aaa; margin-bottom: 5px;">
+                        <span th:text="${s.firstName}"></span> wrote:
+                    </div>
+                    <div th:utext="${s.notes}" style="color: #fff; word-break: break-word;"></div>
+                </div>
+
+                <div th:if="${#lists.isEmpty(students)}" style="text-align: center; opacity: 0.3; padding: 40px;">
+                    (Clean wall... for now)
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

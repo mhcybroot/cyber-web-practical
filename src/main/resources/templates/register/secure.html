@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>Registration (Secure)</h1>
+
+        <div class="mission-grid" style="grid-template-columns: 2fr 1fr;">
+            <!-- Registration Form -->
+            <div class="card" style="border-color: var(--accent-green);">
+                <h4><span style="color: var(--accent-green)">🔒</span> Fort Knox Secure Vault</h4>
+                <p class="text-secondary">Password storage using industry-standard <strong>BCrypt</strong> hashing.</p>
+                <p class="text-secondary" style="font-size: 0.9rem;">Even if we wanted to read your password, we
+                    couldn't. It's just math.</p>
+
+                <hr style="border-color: var(--border-color); margin: 15px 0;" />
+
+                <form th:action="@{/secure/register}" method="post">
+                    <label>Username:</label>
+                    <input type="text" name="username" required placeholder="secure_user" />
+
+                    <label>Password <span
+                            style="color: var(--accent-green); font-size: 0.7rem; text-transform: uppercase;">(Safety
+                            Level: Maximum)</span>:</label>
+                    <input type="password" name="password" required placeholder="••••••••" />
+
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-primary">Register Securely</button>
+                        <button type="button" class="btn"
+                            style="background: rgba(0, 243, 255, 0.2); color: var(--accent-cyan); border: 1px solid var(--accent-cyan);"
+                            onclick="runDemoAndSubmit('username', `admin_${Math.floor(Math.random()*1000)}`); runDemo('password', 'SuperSecretPass1!');">Run
+                            Secure Test</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Encrypted Vault Sidebar -->
+            <div class="card" style="border: 1px solid var(--accent-green); background: rgba(0, 50, 0, 0.2);">
+                <h5 class="text-green">🟢 ENCRYPTED STORAGE</h5>
+                <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 15px;">Live view of <code>users_hashed</code>
+                    table.</p>
+
+                <div th:each="u : ${users}"
+                    style="background: rgba(0,0,0,0.4); padding: 8px; margin-bottom: 8px; border-radius: 4px; border-left: 2px solid var(--accent-green);">
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">User: <span th:text="${u.username}"
+                            style="color: white; font-weight: bold;"></span></div>
+                    <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px;">Hash:</div>
+                    <div
+                        style="font-size: 0.6rem; color: var(--accent-green); font-family: var(--font-mono); word-break: break-all; opacity: 0.8;">
+                        <span th:text="${u.password}"></span>
+                    </div>
+                </div>
+
+                <div th:if="${#lists.isEmpty(users)}" style="text-align: center; padding: 20px; opacity: 0.5;">
+                    <p>Vault empty.</p>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${message}" class="card" style="border-color: var(--accent-green); margin-top: 20px;">
+            <h4 class="text-green">✅ Securely Stored</h4>
+            <p th:text="${message}"></p>
+            <p>Check the sidebar. Your secret is safe with us (as a hash).</p>
+        </div>
+    </div>
+</body>
+
+</html>
