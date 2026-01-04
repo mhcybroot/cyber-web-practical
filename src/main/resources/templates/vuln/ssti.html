@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html th:replace="~{fragments/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>SSTI: The Mad Libs</title>
+</head>
+
+<body>
+    <section>
+        <div class="card">
+            <div class="badge badge-vuln" style="margin-bottom: 10px;">Vulnerability: SSTI (SpEL)</div>
+            <h1>Employee Grievance Form</h1>
+            <p class="text-secondary">We value your feedback. Please describe your grievance using our dynamic template
+                system.</p>
+            <p style="font-size: 0.8rem; color: var(--accent-cyan); font-family: var(--font-mono);">Hint: ${7*7}</p>
+
+            <form th:action="@{/vuln/ssti}" method="post" style="margin-top: 20px;">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">Your Grievance:</label>
+                    <textarea name="grievance" rows="4" placeholder="I am upset because ${reason}..."
+                        required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">File Grievance</button>
+            </form>
+
+            <div th:if="${result}" class="card" style="margin-top: 30px; border-color: var(--accent-purple);">
+                <h3 class="text-purple">Processed Grievance</h3>
+                <div
+                    style="padding: 15px; background: rgba(0,0,0,0.2); border-radius: 6px; font-family: var(--font-mono);">
+                    <p th:text="${result}"></p>
+                </div>
+                <div th:if="${flag}"
+                    style="margin-top: 20px; padding: 10px; border: 1px dashed var(--accent-green); color: var(--accent-green); text-align: center;">
+                    <strong>🚩 FLAG CAPTURED:</strong> <span th:text="${flag}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 40px;">
+            <h3>What is SSTI?</h3>
+            <p>Server-Side Template Injection (SSTI) occurs when an attacker is able to use native template syntax to
+                inject a malicious payload into a template, which is then executed server-side.</p>
+            <p>In this case, the application uses **Spring Expression Language (SpEL)** to process parts of the
+                grievance. If the application doesn't properly sanitize the input, an attacker can execute arbitrary
+                Java code.</p>
+        </div>
+    </section>
+</body>
+
+</html>

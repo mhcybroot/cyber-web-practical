@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>Server-Side Request Forgery (SSRF)</h1>
+
+        <div class="mission-grid">
+            <!-- Secure Panel -->
+            <div class="card" style="border-color: var(--accent-green);">
+                <h4>🛡️ The Firewall (Secure)</h4>
+                <div
+                    style="background: rgba(0, 255, 0, 0.05); border: 1px solid var(--accent-green); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <strong class="text-green">✓ FILTERING ACTIVE</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">
+                        "Internal IP ranges blocked. Domain allowlist enforced."
+                    </p>
+                </div>
+
+                <form th:action="@{/secure/ssrf/scan}" method="post">
+                    <label>Enter URL to Scan:</label>
+                    <input type="text" name="targetUrl" placeholder="http://example.com" value="http://example.com" />
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Safe
+                        Scan</button>
+                </form>
+
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-sm"
+                        onclick="document.querySelector('[name=targetUrl]').value='http://localhost:8080/admin'">
+                        🧪 Try Internal Scan
+                    </button>
+                </div>
+
+                <div th:if="${status}"
+                    style="margin-top: 20px; padding: 10px; background: #000; border: 1px solid var(--accent-green);">
+                    <div th:text="${status}" style="color: var(--accent-green); font-weight: bold; margin-bottom: 5px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

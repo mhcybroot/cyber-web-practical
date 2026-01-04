@@ -6,15 +6,18 @@
     <meta charset="UTF-8">
     <title>CyberLab</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&family=VT323&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/cyber.css}">
     <link rel="stylesheet" th:href="@{/css/glitch.css}">
+    <link rel="stylesheet" th:href="@{/css/matrix.css}">
+    <link rel="stylesheet" th:href="@{/css/ransomware.css}">
     <link rel="stylesheet" th:href="@{/css/mascot.css}">
     <script th:src="@{/js/demo.js}"></script>
 </head>
 
 <body>
+    <canvas id="matrix-canvas"></canvas>
 
     <div class="app-container">
 
@@ -34,6 +37,12 @@
             </div>
 
             <div class="nav-section">
+                <div class="nav-title">Administration</div>
+                <a href="/admin/chaos-center" class="nav-link" style="color: var(--accent-red);">Chaos Control
+                    Center</a>
+            </div>
+
+            <div class="nav-section">
                 <div class="nav-title">Vulnerabilities</div>
                 <a href="/vuln/sqli" class="nav-link">1. SQL Injection</a>
                 <a href="/vuln/xss/reflected" class="nav-link">2. Reflected XSS</a>
@@ -45,6 +54,33 @@
                 <a href="/vuln/error" class="nav-link">8. Security Misconfig</a>
                 <a href="/vuln/redirect?url=http://example.com" class="nav-link">9. Open Redirect</a>
                 <a href="/active/login" class="nav-link">10. Rate Limiting</a>
+                <a href="/vuln/ssrf" class="nav-link">11. SSRF (Network Scan)</a>
+                <a href="/vuln/ssti" class="nav-link">12. SSTI (Mad Libs)</a>
+            </div>
+
+            <!-- Satirical Crypto Miner -->
+            <div class="nav-section"
+                style="margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 20px;">
+                <div class="nav-title">Chaos Miner (Beta)</div>
+                <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; font-size: 0.8rem;">
+                    <div class="flex-between" style="margin-bottom: 5px;">
+                        <span>CPU Load:</span>
+                        <span id="miner-load" class="text-red">99%</span>
+                    </div>
+                    <div
+                        style="height: 4px; background: #222; border-radius: 2px; overflow: hidden; margin-bottom: 10px;">
+                        <div id="miner-progress"
+                            style="height: 100%; width: 0%; background: var(--accent-cyan); transition: width 1s linear;">
+                        </div>
+                    </div>
+                    <div class="flex-between">
+                        <span>Chaos Coins:</span>
+                        <span id="chaos-coins" class="text-green" style="font-weight: bold;">0</span>
+                    </div>
+                    <button onclick="openShop()" class="btn btn-sm btn-outline-primary"
+                        style="width: 100%; margin-top: 10px; font-size: 0.7rem; border-color: var(--accent-purple); color: var(--accent-purple);">Zero-Day
+                        Shop</button>
+                </div>
             </div>
         </aside>
 
@@ -74,7 +110,16 @@
                     </div>
                 </div>
 
-                <div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <!-- Matrix Toggle -->
+                    <div class="matrix-toggle-container">
+                        <label class="switch">
+                            <input type="checkbox" id="matrixToggle" onchange="toggleMatrixMode()">
+                            <span class="slider round"></span>
+                        </label>
+                        <span style="font-size: 0.7rem; color: var(--text-secondary); margin-left: 5px;">MATRIX</span>
+                    </div>
+
                     <form th:action="@{/logout}" method="post" style="display:inline;">
                         <button type="submit" class="btn btn-danger"
                             style="padding: 5px 15px; font-size: 0.8rem;">Logout</button>
@@ -93,6 +138,30 @@
         <div id="mascot-container">
             <div class="mascot-speech" id="mascot-text">...</div>
             <div class="mascot-body"></div>
+        </div>
+
+        <!-- Ransomware Overlay -->
+        <div id="ransomware-overlay">
+            <div class="ransomware-container">
+                <div class="ransomware-header">Ooops, your files have been encrypted!</div>
+                <div class="ransomware-timer">
+                    Payment will be raised on:<br>
+                    <span id="ransom-timer">02:59:59</span>
+                </div>
+                <div class="ransomware-text">
+                    <p>What Happened to My Computer?</p>
+                    <p>Your important files are encrypted. Many of your documents, photos, videos, databases and other
+                        files are no longer accessible because they have been encrypted. Maybe you are busy looking for
+                        a way to recover your files, but do not waste your time. Nobody can recover your files without
+                        our decryption service.</p>
+                    <p>Can I Recover My Files?</p>
+                    <p>Sure. We guarantee that you can recover all your files safely and easily. But you have not so
+                        enough time.</p>
+                </div>
+                <div class="ransomware-footer">
+                    <button onclick="resetRansomware()" class="btn-ransom">I'm just kidding, reset everything</button>
+                </div>
+            </div>
         </div>
 
     </div>

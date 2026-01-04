@@ -1,0 +1,66 @@
+/* Ransomware Overlay */
+#ransomware-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #7a0000;
+    color: white;
+    z-index: 20000;
+    display: none;
+    font-family: "Courier New", Courier, monospace;
+    overflow-y: auto;
+    padding: 50px;
+}
+
+.ransomware-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #000;
+    border: 5px solid #fff;
+    padding: 30px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+.ransomware-header {
+    color: #ff0000;
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.ransomware-timer {
+    background: #333;
+    padding: 20px;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.ransomware-text {
+    font-size: 1rem;
+    line-height: 1.4;
+    margin-bottom: 20px;
+}
+
+.ransomware-footer {
+    text-align: center;
+}
+
+.btn-ransom {
+    background: #7a0000;
+    color: white;
+    border: 2px solid white;
+    padding: 10px 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.btn-ransom:hover {
+    background: white;
+    color: #7a0000;
+}

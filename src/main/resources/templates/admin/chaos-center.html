@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html th:replace="~{fragments/layout :: layout(~{::section})}" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Chaos Control Center</title>
+    <link rel="stylesheet" th:href="@{/css/chaos-center.css}">
+</head>
+
+<body>
+    <section>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h1>Chaos Control Center</h1>
+            <button onclick="enterDarkWeb()" class="btn btn-danger" style="font-size: 0.7rem;">Enter Dark Web</button>
+        </div>
+
+        <div class="chaos-dashboard">
+            <!-- Main Metrics -->
+            <div class="chaos-card">
+                <h3>System Instability</h3>
+                <div class="chaos-metric-value" id="metric-instability">0g</div>
+                <p class="text-secondary">Current atmospheric chaos density.</p>
+            </div>
+
+            <div class="chaos-card" style="grid-row: span 2;">
+                <h3>The Chaos Core</h3>
+                <div class="sphere-container">
+                    <div class="chaos-sphere" id="chaos-core"></div>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <div class="badge badge-vuln">Core Status: Volatile</div>
+                </div>
+            </div>
+
+            <div class="chaos-card">
+                <h3>Tables Leaked</h3>
+                <div class="chaos-metric-value" id="metric-leaks">0</div>
+                <p class="text-secondary">Simulated data exposure rate.</p>
+            </div>
+
+            <!-- Live Feed -->
+            <div class="chaos-card" style="grid-column: span 2;">
+                <h3>Live Incident Feed</h3>
+                <div class="event-feed" id="event-feed">
+                    <div class="event-item">[INFO] Initializing Chaos Monitor...</div>
+                    <div class="event-item">[WARN] Firewall feeling neglected.</div>
+                </div>
+            </div>
+
+            <div class="chaos-card">
+                <h3>Coffee Consumption</h3>
+                <div class="chaos-metric-value">9,000+</div>
+                <p class="text-secondary">Cups per security incident.</p>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

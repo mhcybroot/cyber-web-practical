@@ -58,14 +58,38 @@ const SFX = {
 // --- Mascot Controller ---
 
 let mascotTimeout;
+let idleTimer;
+
+function resetIdleTimer() {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+        triggerMascot(getRandomQuote('idle'), 'snarky');
+    }, 60000); // 1 minute
+}
+
+document.addEventListener('mousemove', resetIdleTimer);
+document.addEventListener('keypress', resetIdleTimer);
+
+function getMascotSkin() {
+    const score = parseInt(localStorage.getItem('chaosScore') || '0');
+    if (score >= 50) return 'tinfoil-hat';
+    if (score >= 25) return 'black-hat';
+    if (score >= 10) return 'white-hat';
+    return 'default';
+}
 
 function triggerMascot(text, mood = 'neutral') {
     const container = document.getElementById('mascot-container');
     const bubble = document.getElementById('mascot-text');
     if (!container || !bubble) return;
 
-    bubble.innerText = text;
+    // Apply skin
+    container.className = ''; // Reset
+    container.id = 'mascot-container';
     container.classList.add('visible');
+    container.classList.add(getMascotSkin());
+
+    bubble.innerText = text;
     container.classList.add('speaking');
 
     // Auto-hide
@@ -77,6 +101,71 @@ function triggerMascot(text, mood = 'neutral') {
 }
 
 // --- Visual FX Engine ---
+
+let matrixInterval;
+function initMatrixRain() {
+    const canvas = document.getElementById('matrix-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%\"'<>!&|^~?@#";
+    const fontSize = 16;
+    const columns = canvas.width / fontSize;
+    const drops = [];
+
+    for (let x = 0; x < columns; x++) {
+        drops[x] = 1;
+    }
+
+    function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#0F0";
+        ctx.font = fontSize + "px VT323";
+
+        for (let i = 0; i < drops.length; i++) {
+            const text = chars.charAt(Math.floor(Math.random() * chars.length));
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+
+    if (matrixInterval) clearInterval(matrixInterval);
+    matrixInterval = setInterval(draw, 33);
+}
+
+function toggleMatrixMode() {
+    const isChecked = document.getElementById('matrixToggle').checked;
+    if (isChecked) {
+        document.body.classList.add('matrix-mode');
+        localStorage.setItem('matrixMode', 'enabled');
+        initMatrixRain();
+        triggerMascot("Follow the white rabbit...", "neutral");
+    } else {
+        document.body.classList.remove('matrix-mode');
+        localStorage.setItem('matrixMode', 'disabled');
+        if (matrixInterval) clearInterval(matrixInterval);
+        triggerMascot("Back to the boring world.", "neutral");
+    }
+}
+
+function restoreMatrixMode() {
+    const state = localStorage.getItem('matrixMode');
+    const toggle = document.getElementById('matrixToggle');
+    if (state === 'enabled' && toggle) {
+        toggle.checked = true;
+        document.body.classList.add('matrix-mode');
+        initMatrixRain();
+    }
+}
 
 function triggerGlitch(elementId = null) {
     const target = elementId ? document.getElementById(elementId) : document.body;
@@ -106,6 +195,53 @@ function triggerConfetti() {
 }
 
 // --- Gamification ---
+
+let coinInterval;
+function initMiner() {
+    let coins = parseInt(localStorage.getItem('chaosCoins') || '0');
+    let progress = 0;
+    const progressEl = document.getElementById('miner-progress');
+    const coinsEl = document.getElementById('chaos-coins');
+    const loadEl = document.getElementById('miner-load');
+
+    if (!progressEl || !coinsEl) return;
+
+    coinsEl.innerText = coins;
+
+    if (coinInterval) clearInterval(coinInterval);
+    coinInterval = setInterval(() => {
+        progress += 10;
+        if (progress > 100) {
+            progress = 0;
+            coins += 1;
+            localStorage.setItem('chaosCoins', coins);
+            coinsEl.innerText = coins;
+            // Fake load spike
+            loadEl.innerText = (90 + Math.floor(Math.random() * 10)) + "%";
+            loadEl.classList.toggle('text-red');
+        }
+        progressEl.style.width = progress + "%";
+    }, 1000);
+}
+
+function openShop() {
+    const coins = parseInt(localStorage.getItem('chaosCoins') || '0');
+    const hintCost = 10;
+
+    if (coins < hintCost) {
+        triggerMascot(`You only have ${coins} Chaos Coins. Mining is hard work, kid. Try harder.`, 'snarky');
+        return;
+    }
+
+    const buy = confirm(`Zero-Day Shop\n\n- Flag Hint (Costs ${hintCost} Coins)\n\nSpend ${hintCost} coins for a hint?`);
+    if (buy) {
+        localStorage.setItem('chaosCoins', coins - hintCost);
+        document.getElementById('chaos-coins').innerText = coins - hintCost;
+        SFX.success();
+        notifyAchievement("Dirty Money spent");
+        alert("HINT: Try looking at the source code of the grievance form. SpEL evaluation can be dangerous!");
+    }
+}
 
 function updateScoreUI() {
     const scoreEl = document.getElementById('chaosScoredisplay');
@@ -197,7 +333,7 @@ async function submitFlag() {
             setTimeout(() => input.placeholder = "Enter captured flag...", 3000);
         } else {
             SFX.fail();
-            triggerMascot(result.message, 'snarky');
+            triggerMascot(getRandomQuote('fail'), 'snarky');
             input.classList.add('glitch-active');
             setTimeout(() => input.classList.remove('glitch-active'), 500);
         }
@@ -246,5 +382,92 @@ function navigateTo(url) {
     window.location.href = url;
 }
 
+function checkFailedLogins() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('error')) {
+        let fails = parseInt(localStorage.getItem('failedLogins') || '0');
+        fails++;
+        localStorage.setItem('failedLogins', fails);
+
+        if (fails >= 5) {
+            showRansomware();
+        } else {
+            triggerMascot(`Failed login attempt ${fails}/5. Keep going, you're almost... fired.`, 'snarky');
+        }
+    }
+}
+
+function showRansomware() {
+    const overlay = document.getElementById('ransomware-overlay');
+    if (overlay) {
+        overlay.style.display = 'block';
+        SFX.fail();
+        // Start a fake timer
+        let timeLeft = 3 * 3600; // 3 hours
+        const timerEl = document.getElementById('ransom-timer');
+        const timerInterval = setInterval(() => {
+            timeLeft--;
+            if (timeLeft <= 0) clearInterval(timerInterval);
+            const h = Math.floor(timeLeft / 3600);
+            const m = Math.floor((timeLeft % 3600) / 60);
+            const s = timeLeft % 60;
+            if (timerEl) timerEl.innerText = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }, 1000);
+    }
+}
+
+function resetRansomware() {
+    localStorage.setItem('failedLogins', '0');
+    const overlay = document.getElementById('ransomware-overlay');
+    if (overlay) overlay.style.display = 'none';
+    triggerMascot("That was a close one, wasn't it?", "neutral");
+}
+
+// --- Chaos Control Center ---
+
+function initChaosCenter() {
+    const feed = document.getElementById('event-feed');
+    if (!feed) return;
+
+    const events = [
+        "Unauthorized access attempt from 127.0.0.1 (Wait, that's me).",
+        "Dropped table 'users'... just kidding. Or am I?",
+        "Firewall reached critical sadness level.",
+        "Detected logic bomb: 'if(true) launch_nukes()'.",
+        "Sensitive data leaked to local printer.",
+        "Hacker 'Buggy' connected to port 1337.",
+        "Buffer overflow near your left elbow.",
+        "XSS payload filtered... through a coffee filter."
+    ];
+
+    setInterval(() => {
+        const item = document.createElement('div');
+        item.className = 'event-item';
+        const time = new Date().toLocaleTimeString();
+        item.innerText = `[${time}] ${events[Math.floor(Math.random() * events.length)]}`;
+        feed.prepend(item);
+        if (feed.children.length > 10) feed.removeChild(feed.lastChild);
+
+        // Randomly update metrics
+        document.getElementById('metric-instability').innerText = (Math.random() * 10).toFixed(2) + "g";
+        document.getElementById('metric-leaks').innerText = Math.floor(Math.random() * 500);
+    }, 3000);
+}
+
+function enterDarkWeb() {
+    document.body.classList.toggle('dark-web-mode');
+    if (document.body.classList.contains('dark-web-mode')) {
+        triggerMascot("Welcome to the underground. Don't touch anything.", "snarky");
+    } else {
+        triggerMascot("Back to the light. Boring.", "neutral");
+    }
+}
+
 // Init
-document.addEventListener('DOMContentLoaded', updateScoreUI);
+document.addEventListener('DOMContentLoaded', () => {
+    updateScoreUI();
+    restoreMatrixMode();
+    initMiner();
+    checkFailedLogins();
+    initChaosCenter();
+});

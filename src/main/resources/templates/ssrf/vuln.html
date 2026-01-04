@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{fragments/layout :: layout(~{::div})}">
+
+<body>
+    <div>
+        <h1>Server-Side Request Forgery (SSRF)</h1>
+
+        <div class="mission-grid">
+            <!-- Vulnerable Panel -->
+            <div class="card">
+                <h4>👁️ The All-Seeing Eye (Vulnerable)</h4>
+                <div
+                    style="background: rgba(255, 51, 102, 0.1); border: 1px dashed var(--accent-red); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                    <strong class="text-red">⚠️ WARNING: NO OUTBOUND FILTERING</strong>
+                    <p class="text-secondary" style="margin: 5px 0 0; font-size: 0.9rem;">
+                        "I can see anything... even things inside this server."
+                    </p>
+                </div>
+
+                <form th:action="@{/vuln/ssrf/scan}" method="post">
+                    <label>Enter URL to Scan:</label>
+                    <input type="text" name="targetUrl" placeholder="http://example.com" value="http://example.com" />
+                    <button type="submit" class="btn btn-danger" style="width: 100%; margin-top: 10px;">Initiate
+                        Scan</button>
+                </form>
+
+                <div style="margin-top: 15px;">
+                    <button class="btn btn-sm"
+                        onclick="document.querySelector('[name=targetUrl]').value='http://localhost:8080/admin/health'">
+                        🧪 Try Internal Scan (Port 8080)
+                    </button>
+                    <button class="btn btn-sm"
+                        onclick="document.querySelector('[name=targetUrl]').value='file:///etc/passwd'">
+                        🧪 Try File Access
+                    </button>
+                </div>
+
+                <div th:if="${status}"
+                    style="margin-top: 20px; padding: 10px; background: #000; border: 1px solid var(--accent-cyan);">
+                    <div th:text="${status}" style="color: var(--accent-cyan); font-weight: bold; margin-bottom: 5px;">
+                    </div>
+                    <pre th:text="${response}"
+                        style="color: #aaa; font-size: 0.8rem; overflow: auto; max-height: 200px;"></pre>
+                </div>
+            </div>
+
+            <!-- Info Panel -->
+            <div class="card" style="border-style: dashed; opacity: 0.7;">
+                <h4>How it works</h4>
+                <p>The server takes your URL and makes a request from <b>its own network</b>.</p>
+                <p>If not secured, it can reach internal services (db, redis, cloud metadata) that act differently when
+                    accessed from "localhost".</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
